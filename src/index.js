@@ -60,10 +60,18 @@ module.exports = (uri, auth) => {
       });
     };
 
-    return resolve({
-      getConfigByProbeId,
-      runQuery
-    })
+    LocalDB.replicate.from(db)
+      .on('complete', function (info) {
+        resolve({
+          getConfigByProbeId,
+          runQuery
+        })
+      }).on('denied', function (err) {
+        reject(err);
+      }).on('error', function (err) {
+        reject(err);
+      });
+
   });
 };
 
