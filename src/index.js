@@ -1,8 +1,9 @@
 'use strict';
 
 const PouchDB = require('pouchdb');
-const LocalDB = new PouchDB('localConf');
-PouchDB.plugin(require('pouchdb-find'));
+PouchDB.plugin(require('pouchdb-adapter-memory'));
+const LocalDB = new PouchDB('conf',{adapter:'memory'});
+
 
 module.exports = (uri, auth) => {
 
@@ -42,29 +43,15 @@ module.exports = (uri, auth) => {
       throw new Error('Couchdb replication error');
     });
 
-    LocalDB.createIndex({
-      index: { fields: ['probeId'] }
-    });
+    const getConfigById = (id) => {
 
-    const getConfigByProbeId = (probeId) => {
-
-      return LocalDB.find({
-        selector: { probeId }
-      });
-    };
-
-    const runQuery = (query) => {
-
-      return LocalDB.find({
-        selector: query
-      });
-    };
+      return LocalDB.get(id);
+    }
 
     LocalDB.replicate.from(db)
       .on('complete', function (info) {
         resolve({
-          getConfigByProbeId,
-          runQuery
+          getConfigById
         })
       }).on('denied', function (err) {
         reject(err);
@@ -74,8 +61,3 @@ module.exports = (uri, auth) => {
 
   });
 };
-
-
-
-
-
