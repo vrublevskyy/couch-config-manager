@@ -18,6 +18,6 @@
   "homepage": "https://github.com/vrublevskyy/couch-config-manager#readme",
   "dependencies": {
     "pouchdb": "^6.3.4",
-    "pouchdb-find": "^6.3.4"
+    "pouchdb-adapter-memory": "^6.3.4"
   }
 }
